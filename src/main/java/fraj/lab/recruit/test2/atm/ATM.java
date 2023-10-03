@@ -37,9 +37,12 @@ public class ATM {
 		if (! cashManager.canDeliver(locAmount)) {
 			return ATMStatus.CASH_NOT_AVAILABLE;
 		}
-		paymentProcessor.pay(locAmount);
-		cashManager.deliver(locAmount);
-		return ATMStatus.DONE;
+		PaymentStatus paymentStatus = paymentProcessor.pay(locAmount);
+		if (paymentStatus.equals(PaymentStatus.FAILURE)) {
+			return ATMStatus.PAYMENT_REJECTED;
+		} else {
+			cashManager.deliver(locAmount);
+			return ATMStatus.DONE;
+		}
 	}
-
 }
